@@ -28,7 +28,7 @@ in “Architecture options” select `Architecture: aarch64` and `Machine Type: 
 click into the black area of the VMs Window to capture Mouse and Keyboard
 , hit Enter to start text based Debian Installer
 , create `root` password and `youruser` with password as they will be on the final image
-partition manually the disk image as follows
+, partition manually the disk image as follows
 
 	Partition 1: Size 100M, Name efi, Use as EFI System Partition, Bootable flag on 
 	Partition 2: Size 100M, Name boot, Use as Ext 2 file system, Mount point /boot   Bootable flag off
