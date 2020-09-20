@@ -1,0 +1,7 @@
+label: mbr
+unit: sectors
+first-lba: 64
+
+start=   2048, size=   16384
+start=  18432, size=  614400, bootable
+start= 632832
