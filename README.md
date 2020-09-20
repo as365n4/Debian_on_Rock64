@@ -17,17 +17,17 @@ Download the arm64 mini.iso from Debian
 open Virtual Machine Manager
 select `“Local install media (ISO image or CDROM)”`
 in “Architecture options” select `Architecture: aarch64` and `Machine Type: virt`
-next select the just downloaded mini.iso
-next choose the operating system `Debian 10`
-next set Memory to `1024` and CPUs to `4`
-next create a disk image and set size to `4 GiB`
-finally click “Finish” and click “Yes” to make Virtual Network active
+,next select the just downloaded mini.iso
+,next choose the operating system `Debian 10`
+,next set Memory to `1024` and CPUs to `4`
+,next create a disk image and set size to `4 GiB`
+,finally click “Finish” and click “Yes” to make Virtual Network active
 
 #### 3.)	Install Debian for arm64 in your Virtual Machine
 
 click into the black area of the VMs Window to capture Mouse and Keyboard
-hit Enter to start text based Debian Installer
-create `root` password and `youruser` with password as they will be on the final image
+,hit Enter to start text based Debian Installer
+,create `root` password and `youruser` with password as they will be on the final image
 partition manually the disk image as follows
 
 	Partition 1: Size 100M, Name efi, Use as EFI System Partition, Bootable flag on 
@@ -35,7 +35,7 @@ partition manually the disk image as follows
 	Partition 3: Size max, Use as Ext 4 journaling file system, Mount point /   Bootable flag off
 	
 confirm that you don’t want to create Swap Space by clicking `<NO>`
-in “Software selection” select only `SSH server` and `standard system utilities`
+,in “Software selection” select only `SSH server` and `standard system utilities`
 and finish the installation, once finished reboot into the newly installed system
 	
 #### 4.)	DTB file handling
