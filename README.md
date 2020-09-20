@@ -143,6 +143,7 @@ and finish the installation, once finished reboot into the newly installed syste
 	start= 632832
 
 `sudo /sbin/sfdisk debian-rock64.img < sfdisk.template`
+
 `sudo kpartx -v -a debian-rock64.img`
 
 	sudo mkfs.ext2 -m0 -L boot /dev/mapper/loop0p2
