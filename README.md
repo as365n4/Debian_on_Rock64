@@ -212,13 +212,17 @@ and finish the installation, once finished reboot into the newly installed syste
 
 `reboot`
 
-`ip a`				check that network is working
+check that network is working
 
-`apt update`			perform system update
-`apt upgrade`
-`apt dist-upgrade`
-`apt autoremove`
-`apt autoclean`
+`ip a`
+
+perform system update
+
+	apt update
+	apt upgrade
+	apt dist-upgrade
+	apt autoremove
+	apt autoclean
 
 
 #### Done, enjoy your setup.
