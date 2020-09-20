@@ -1,0 +1,7 @@
+#!/bin/sh
+	
+set -e
+version=”$1”
+	
+echo Copying current dtb files to /boot/dtbs….
+cp -a /usr/lib/linux-image-${version}/. /boot/dtbs/
