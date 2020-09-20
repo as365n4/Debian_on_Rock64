@@ -73,9 +73,11 @@ and finish the installation, once finished reboot into the newly installed syste
 	DEVICETREEDIR /dtbs
 	APPEND console=tty1 console=ttyS2,1500000 root=LABEL=root rw rootwait
 
-	apt purge grub-efi-arm64
-	apt autoremove
-	apt autoclean
+`apt purge grub-efi-arm64`
+
+`apt autoremove`
+
+`apt autoclean`
 
 `shutdown -h now`
 
