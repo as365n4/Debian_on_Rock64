@@ -73,9 +73,9 @@ and finish the installation, once finished reboot into the newly installed syste
 	DEVICETREEDIR /dtbs
 	APPEND console=tty1 console=ttyS2,1500000 root=LABEL=root rw rootwait
 
-`apt purge grub-efi-arm64`
-`apt autoremove`
-`apt autoclean`
+	apt purge grub-efi-arm64
+	apt autoremove
+	apt autoclean
 
 `shutdown -h now`
 
@@ -85,17 +85,17 @@ and finish the installation, once finished reboot into the newly installed syste
 
 `sudo qemu-nbd --connect=/dev/nbd0 /var/lib/libvirt/images/debian10-aarch64-clone.qcow2`
 	
-`sudo mount /dev/nbd0p2 /mnt`
-`cd /mnt`
-`sudo tar cfvzp /home/youruser/assets/debian-aarch64-bootfs.tar.gz .`
-`cd`
-`umount /mnt`
+	sudo mount /dev/nbd0p2 /mnt
+	cd /mnt
+	sudo tar cfvzp /home/youruser/assets/debian-aarch64-bootfs.tar.gz .
+	cd
+	umount /mnt
 
-`sudo mount /dev/nbd0p3 /mnt`
-`cd /mnt`
-`sudo tar cfvzp /home/youruser/assets/debian-aarch64-rootfs.tar.gz .`
-`cd`
-`umount /mnt`
+	sudo mount /dev/nbd0p3 /mnt
+	cd /mnt
+	sudo tar cfvzp /home/youruser/assets/debian-aarch64-rootfs.tar.gz .
+	cd
+	umount /mnt
 
 `sudo qemu-nbd -d /dev/nbd0`
 
