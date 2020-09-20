@@ -172,11 +172,11 @@ and finish the installation, once finished reboot into the newly installed syste
 	sudo dd if=debian-rock64.img of=/dev/sdX bs=1M
 	cd
 
-#### 11.)	Use GParted and create a SWAP partition of 1GB at the end of the eMMC-Module and then extend
-####    the /root partition to fill up the empty space between. (leave 1MB as free space at the end of eMMC)
+11.)	Use GParted and create a SWAP partition of 1GB at the end of the eMMC-Module and then extend
+	the /root partition to fill up the empty space between. (leave 1MB as free space at the end of eMMC)
 
-#### 12.)	Installing the eMMC-Module onto your Pine64 Rock64 SBC, connecting HDMI,
-####    Mouse and Keyboard and power it up.
+12.)	Installing the eMMC-Module onto your Pine64 Rock64 SBC, connecting HDMI,
+	Mouse and Keyboard and power it up.
 
 `nano /etc/network/interfaces`			change interface to eth0
 
