@@ -85,19 +85,28 @@ and finish the installation, once finished reboot into the newly installed syste
 
 `sudo modprobe nbd max_part=8`
 
-`sudo qemu-nbd --connect=/dev/nbd0 /var/lib/libvirt/images/debian10-aarch64-clone.qcow2`
+`sudo qemu-nbd --connect=/dev/nbd0 /var/lib/libvirt/images/debian10-aarch64.qcow2`
 	
-	sudo mount /dev/nbd0p2 /mnt
-	cd /mnt
-	sudo tar cfvzp /home/youruser/assets/debian-aarch64-bootfs.tar.gz .
-	cd
-	umount /mnt
+`sudo mount /dev/nbd0p2 /mnt`
 
-	sudo mount /dev/nbd0p3 /mnt
-	cd /mnt
-	sudo tar cfvzp /home/youruser/assets/debian-aarch64-rootfs.tar.gz .
-	cd
-	umount /mnt
+`cd /mnt`
+
+`sudo tar cfvzp /home/youruser/assets/debian-aarch64-bootfs.tar.gz .`
+
+`cd`
+
+`sudo umount /mnt`
+
+
+`sudo mount /dev/nbd0p3 /mnt`
+
+`cd /mnt`
+
+`sudo tar cfvzp /home/youruser/assets/debian-aarch64-rootfs.tar.gz .`
+
+`cd`
+
+`sudo umount /mnt`
 
 `sudo qemu-nbd -d /dev/nbd0`
 
