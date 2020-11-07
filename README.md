@@ -71,7 +71,7 @@ and finish the installation, once finished reboot into the newly installed syste
 	KERNEL /vmlinuz
 	INITRD /initrd.img
 	DEVICETREEDIR /dtbs
-	APPEND console=tty1 console=ttyS2,1500000 root=LABEL=root rw rootwait
+	APPEND console=tty1 root=LABEL=root rw rootwait
 
 `apt purge grub-efi-arm64`
 
@@ -125,8 +125,8 @@ and finish the installation, once finished reboot into the newly installed syste
 	
 	git clone git://git.denx.de/u-boot.git
 	cd u-boot
-	git tag					remember last stable (v2020.07)
-	git checkout v2020.07
+	git tag					remember last stable (v2020.10)
+	git checkout v2020.10
 	ln -s /home/youruser/arm-trusted-firmware/build/rk3328/release/bl31/bl31.elf bl31.elf
 	make CROSS_COMPILE=aarch64-linux-gnu- BL31=bl31.elf rock64-rk3328_defconfig
 	make -j4 CROSS_COMPILE=aarch64-linux-gnu- BL31=bl31.elf all u-boot.itb
@@ -134,77 +134,41 @@ and finish the installation, once finished reboot into the newly installed syste
 	cp /home/youruser/u-boot/idbloader.img /home/youruser/assets/
 	cp /home/youruser/u-boot/u-boot.itb /home/youruser/assets/
 
-#### 9.)	Assembling the final image for our Pine64 Rock64 SBC
+#### 9.)	Flashing Debian to our Pine64 Rock64 SBC
 
-`sudo apt install kpartx`
+`sudo fdisk /dev/sdX`		type `o` this will clear out any partitions on the drive
+				type `p` to list partitions, there should be no partitions left
+				type `n`, then `p` for primary, `1` for the first partition on the drive,
+				`32768` for the first sector, and `647167` for the last sector, then type `a`
+				then type `n`, then `p` for primary, `2` for the second partition on the drive,
+				`647168` for the first sector,and `28211199` for the last sector, then type
+				`n`, then `p` for primary, `3` for the third partition on the drive, `28211200`
+				for the first sector, and `30308351` for the last sector, then type `t`, and
+				`3` for the third partition, and `82` for the Hex Code, then write the
+				partition table and exit by typing `w`
 
 `cd /home/youruser/assets`
-`dd if=/dev/zero of=debian-rock64.img bs=1M count=4096`
 
-`nano sfdisk.template`
+`mkdir boot`			this is in your home directory ! → /home/youruser/assets/boot
 
-	label: mbr
-	unit: sectors
-	first-lba: 64
+`mkdir root`			this is in your home directory ! → /home/youruser/assets/root
 
-	start=   2048, size=   16384
-	start=  18432, size=  614400, bootable
-	start= 632832
-
-`sudo /sbin/sfdisk debian-rock64.img < sfdisk.template`
-
-`sudo kpartx -v -a debian-rock64.img`
-
-	sudo mkfs.ext2 -m0 -L boot /dev/mapper/loop0p2
-	sudo mount /dev/mapper/loop0p2 /mnt
-	cd /mnt
+	sudo mkfs.ext2 -m0 -L boot /dev/sdX1
+	sudo mount /dev/sdX1 /home/youruser/assets/boot
+	cd /home/youruser/assets/boot
 	sudo tar xzvpf /home/youruser/assets/debian-aarch64-bootfs.tar.gz .
 	sync
-	cd
-	sudo umount /mnt
+	cd ..
+	sudo umount /home/youruser/assets/boot
 
-	sudo mkfs.ext4 -L root /dev/mapper/loop0p3
-	sudo mount /dev/mapper/loop0p3 /mnt
-	cd /mnt
+	sudo mkfs.ext4 -L root /dev/sdX2
+	sudo mount /dev/sdX2 /home/youruser/assets/root
+	cd /home/youruser/assets/root
 	sudo tar xzvpf /home/youruser/assets/debian-aarch64-rootfs.tar.gz .
 	sync
-	cd
-	sudo umount /mnt
+	cd ..
 
-	cd home/youruser/assets/
-	dd if=idbloader.img of=debian-rock64.img seek=64 conv=notrunc
-	dd if=u-boot.itb of=debian-rock64.img seek=16384 conv=notrunc
-
-#### 10.)	Flashing the newly build image onto eMMC-Module for our Pine64 Rock64 SBC
-
-	lsblk
-	(sudo umount /dev/sdX1)
-
-	cd home/youruser/assets/
-	sudo dd if=debian-rock64.img of=/dev/sdX bs=1M
-	cd
-
-#### 11.)	Use GParted and create a SWAP partition of 1GB at the end of the eMMC-Module and then extend the /root partition to fill up the empty space between. (leave 1MB as free space at the end of eMMC)
-
-#### 12.)	Installing the eMMC-Module onto your Pine64 Rock64 SBC, connecting HDMI, Mouse and Keyboard and power it up.
-
-`nano /etc/network/interfaces`			change interface to eth0
-
-	# This file describes the network interfaces available on your system
-	# and how to activate them. For more information, see interfaces(5).
-
-	source /etc/network/interfaces.d/*
-
-	# The loopback network interface
-	auto lo
-	iface lo inet loopback
-
-	# The primary network interface
-	allow-hotplug eth0
-	iface eth0 inet dhcp
-
-
-`nano /etc/fstab`					add SWAP and replace Labels with device names
+`sudo nano /home/youruser/assets/root/etc/fstab`		amend as below
 
 	# /etc/fstab: static file system information.
 	#
@@ -215,18 +179,59 @@ and finish the installation, once finished reboot into the newly installed syste
 	# systemd generates mount units based on this file, see systemd.mount(5).
 	# Please run 'systemctl daemon-reload' after making changes here.
 	#
-	# <file system> <mount point>   <type>  <options>       <dump>  <pass>
-	/dev/mmcblk1p2   /boot           ext2    defaults        0       2
-	/dev/mmcblk1p3   /               ext4    errors=remount-ro 0       1
-	/dev/mmcblk1p4  swap    swap    defaults        0       0
-	/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+	# <file system> <mount point> <type> <options> <dump> <pass>
+	/dev/mmcblk1p1 /boot	ext2	defaults	0	2
+	/dev/mmcblk1p2 /	ext4	errors=remount-ro	0	1
+	/dev/mmcblk1p3 swap	swap	defaults	0	0
+	/dev/sr0/media/cdrom0	udf,iso9660 user,noauto 0	0
 
+`sudo nano /home/youruser/assets/root/etc/network/interfaces`		change interface to eth0
 
-`reboot`
+	# This file describes the network interfaces available on your system
+	# and how to activate them. For more information, see interfaces(5).
+	
+	source /etc/network/interfaces.d/*
+	
+	# The loopback network interface
+	auto lo
+	iface lo inet loopback
+	
+	# The primary network interface
+	auto eth0
+	allow-hotplug eth0
+	iface eth0 inet dhcp
 
-check that network is working
+`sudo umount /home/youruser/assets/root`
 
-`ip a`
+`sudo mkswap /dev/sdX3`
+
+	cd home/youruser/assets/
+	dd if=idbloader.img of=/dev/sdX seek=64 conv=notrunc
+	dd if=u-boot.itb of=/dev/sdX seek=16384 conv=notrunc
+
+#### 10.)	Install the eMMC-Module onto your Pine64 Rock64 SBC, connecting HDMI, Mouse and Keyboard and power it up.
+
+`ip a`		check that network is working
+
+#### 11.)	Check the MAC address, may need spoofing if address is 12:ac:66:34:01:32 (1GB Board) or ae:44:ee:39:d1:65 (4GB Board)
+
+`ip link show eth0`
+
+If you MAC address is `12:ac:66:34:01:32` or `ae:44:ee:39:d1:65` then do steps below, or the network
+will not work ! (if you have multiple Rock64 SBC on the same network)
+
+`nano /etc/systemd/network/00-default.link`
+
+	[Match]
+	MACAddress= 12:ac:66:34:01:32
+	
+	[Link]
+	MACAddress=12:ac:66:02:02:02
+	NamePolicy=kernel database onboard slot path
+
+Change the last 3 bits of the linked MAC address to your liking,but DO NOT change the first 3 bits (reserved for Manufacturer).
+
+`reboot`		once board is up, check with `ip link show eth0` for success
 
 perform system update
 
