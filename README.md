@@ -136,16 +136,17 @@ and finish the installation, once finished reboot into the newly installed syste
 
 #### 9.)	Flashing Debian to our Pine64 Rock64 SBC
 
-`sudo fdisk /dev/sdX`		type `o` this will clear out any partitions on the drive
-				type `p` to list partitions, there should be no partitions left
-				type `n`, then `p` for primary, `1` for the first partition on the drive,
-				`32768` for the first sector, and `647167` for the last sector, then type `a`
-				then type `n`, then `p` for primary, `2` for the second partition on the drive,
-				`647168` for the first sector,and `28211199` for the last sector, then type
-				`n`, then `p` for primary, `3` for the third partition on the drive, `28211200`
-				for the first sector, and `30308351` for the last sector, then type `t`, and
-				`3` for the third partition, and `82` for the Hex Code, then write the
-				partition table and exit by typing `w`
+`sudo fdisk /dev/sdX`
+
+type `o` this will clear out any partitions on the drive
+, type `p` to list partitions, there should be no partitions left
+, type `n`, then `p` for primary, `1` for the first partition on the drive
+, `32768` for the first sector, and `647167` for the last sector, then type `a`
+, then type `n`, then `p` for primary, `2` for the second partition on the drive
+, `647168` for the first sector,and `28211199` for the last sector, then type `n`
+, then `p` for primary, `3` for the third partition on the drive, `28211200` for the first sector
+, and `30308351` for the last sector, then type `t` and `3` for the third partition and `82` for the Hex Code
+, then write the partition table and exit by typing `w`
 
 `cd /home/youruser/assets`
 
