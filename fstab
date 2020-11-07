@@ -8,7 +8,7 @@
 # Please run 'systemctl daemon-reload' after making changes here.
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
-/dev/mmcblk1p2   /boot           ext2    defaults        0       2
-/dev/mmcblk1p3   /               ext4    errors=remount-ro 0       1
-/dev/mmcblk1p4  swap    swap    defaults        0       0
-/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+/dev/mmcblk1p1   /boot           ext2        defaults        0       2
+/dev/mmcblk1p2   /               ext4        errors=remount-ro     0       1
+/dev/mmcblk1p3   swap            swap        defaults        0       0
+/dev/sr0         /media/cdrom0   udf,iso9660 user,noauto     0       0
