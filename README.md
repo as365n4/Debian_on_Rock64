@@ -214,33 +214,57 @@ type `o` this will clear out any partitions on the drive
 
 `ip a`		check that network is working
 
-#### 11.)	Check the MAC address, may need spoofing if address is 12:ac:66:34:01:32 (1GB Board) or ae:44:ee:39:d1:65 (4GB Board)
+#### 11.)	Check the MAC address, may need spoofing if address is 7a:84:e4:9e:1e:c8 (1GB Board) or 36:59:33:ba:58:27 (4GB Board)
 
 `ip link show eth0`
 
-If you MAC address is `12:ac:66:34:01:32` or `ae:44:ee:39:d1:65` then do steps below, or the network
+If you MAC address is `7a:84:e4:9e:1e:c8` or `36:59:33:ba:58:27` then do steps below, or the network
 will not work ! (if you have multiple Rock64 SBC on the same network)
 
-`nano /etc/systemd/network/00-default.link`
+`sudo nano /etc/systemd/network/00-default.link`
 
 	[Match]
-	MACAddress= 12:ac:66:34:01:32
+	MACAddress= 7a:84:e4:9e:1e:c8
 	
 	[Link]
-	MACAddress=12:ac:66:02:02:02
+	MACAddress=7a:84:e4:02:02:02
 	NamePolicy=kernel database onboard slot path
 
 Change the last 3 bits of the linked MAC address to your liking,but DO NOT change the first 3 bits (reserved for Manufacturer).
 
-`reboot`		once board is up, check with `ip link show eth0` for success
+`sudo reboot`		once board is up, check with `ip link show eth0` for success
 
 perform system update
 
-	apt update
-	apt upgrade
-	apt dist-upgrade
-	apt autoremove
-	apt autoclean
+	sudo apt update
+	sudo apt upgrade
+	sudo apt dist-upgrade
+	sudo apt autoremove
+	sudo apt autoclean
+
+
+#### 12.)	Remove unnecessary packages, which are no longer required
+
+	sudo apt purge qemu-guest-agent
+
+#### 13.)	Add Firmware for Rockchip CDN DisplayPort Controller
+
+`sudo nano /etc/apt/sources.list`
+
+	# deb http://deb.debian.org/debian bullseye main
+	
+	deb http://deb.debian.org/debian bullseye main contrib non-free
+	deb-src http://deb.debian.org/debian bullseye main contrib non-free
+	
+	deb http://deb.debian.org/debian-security/ bullseye-security main contrib non-free
+	deb-src http://deb.debian.org/debian-security/ bullseye-security main contrib non-free
+	
+	deb http://deb.debian.org/debian bullseye-updates main contrib non-free
+	deb-src http://deb.debian.org/debian bullseye-updates main contrib non-free
+
+`sudo apt update`	perform system update
+
+`sudo apt install firmware-misc-nonfree`	contains –> rockchip/dptx.bin
 
 
 #### Done, enjoy your setup.
