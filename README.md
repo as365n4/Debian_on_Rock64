@@ -249,7 +249,7 @@ perform system update
 
 #### 13.)	Add Firmware for Rockchip CDN DisplayPort Controller
 
-`sudo nano /etc/apt/sources.list`
+`sudo nano /etc/apt/sources.list`	amend as below to add `contrib` and `non-free` component
 
 	# deb http://deb.debian.org/debian bullseye main
 	
