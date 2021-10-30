@@ -118,15 +118,15 @@ and finish the installation, once finished reboot into the newly installed syste
 
 	git clone https://github.com/ARM-software/arm-trusted-firmware
 	cd arm-trusted-firmware
-	git tag					remember last stable (v2.3)
-	git checkout v2.3
+	git tag					remember last stable (v2.5)
+	git checkout v2.5
 	make CROSS_COMPILE=aarch64-linux-gnu- PLAT=rk3328 bl31
 	cd ..
 	
 	git clone git://git.denx.de/u-boot.git
 	cd u-boot
-	git tag					remember last stable (v2020.10)
-	git checkout v2020.10
+	git tag					remember last stable (v2021.07)
+	git checkout v2021.07
 	ln -s /home/youruser/arm-trusted-firmware/build/rk3328/release/bl31/bl31.elf bl31.elf
 	make CROSS_COMPILE=aarch64-linux-gnu- BL31=bl31.elf rock64-rk3328_defconfig
 	make -j4 CROSS_COMPILE=aarch64-linux-gnu- BL31=bl31.elf all u-boot.itb
