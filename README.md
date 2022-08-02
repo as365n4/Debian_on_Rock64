@@ -269,7 +269,7 @@ perform system update
 
 #### 14.)	Hide kernel messages during boot
 
-`nano /etc/sysctl.conf`		amend as below
+`sudo nano /etc/sysctl.conf`		amend as below
 
 	# Uncomment the following to stop low-level messages on console
 	kernel.printk = 3 4 1 3
