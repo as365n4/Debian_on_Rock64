@@ -63,7 +63,6 @@ and finish the installation, once finished reboot into the newly installed syste
 `nano /boot/extlinux/extlinux.conf`
 
 	TIMEOUT 2
-	PROMPT 1
 	DEFAULT debian
 
 	LABEL debian
@@ -71,7 +70,7 @@ and finish the installation, once finished reboot into the newly installed syste
 	KERNEL /vmlinuz
 	INITRD /initrd.img
 	DEVICETREEDIR /dtbs
-	APPEND console=tty1 root=LABEL=root rw rootwait
+	APPEND console=ttyS2,1500000 console=tty1 root=LABEL=root rw rootwait
 
 `apt purge grub-efi-arm64`
 
@@ -118,41 +117,41 @@ and finish the installation, once finished reboot into the newly installed syste
 
 	git clone https://github.com/ARM-software/arm-trusted-firmware
 	cd arm-trusted-firmware
-	git tag					remember last stable (v2.5)
-	git checkout v2.5
+	git tag					remember last stable (v2.7)
+	git checkout v2.7
 	make CROSS_COMPILE=aarch64-linux-gnu- PLAT=rk3328 bl31
 	cd ..
 	
 	git clone git://git.denx.de/u-boot.git
 	cd u-boot
-	git tag					remember last stable (v2021.07)
-	git checkout v2021.07
-	ln -s /home/youruser/arm-trusted-firmware/build/rk3328/release/bl31/bl31.elf bl31.elf
+	git tag					remember last stable (v2022.04)
+	git checkout v2022.04
+	ln -s /home/youruser/assets/arm-trusted-firmware/build/rk3328/release/bl31/bl31.elf bl31.elf
 	make CROSS_COMPILE=aarch64-linux-gnu- BL31=bl31.elf rock64-rk3328_defconfig
 	make -j4 CROSS_COMPILE=aarch64-linux-gnu- BL31=bl31.elf all u-boot.itb
 
 	cp /home/youruser/u-boot/idbloader.img /home/youruser/assets/
 	cp /home/youruser/u-boot/u-boot.itb /home/youruser/assets/
 
-#### 9.)	Flashing Debian to our Pine64 Rock64 SBC
+#### 9.)	Flashing Debian to our Pine64 Rock64 SBC   (16GB eMMC module with 30310400 sectors)
 
 `sudo fdisk /dev/sdX`
 
 type `o` this will clear out any partitions on the drive
 , type `p` to list partitions, there should be no partitions left
 , type `n`, then `p` for primary, `1` for the first partition on the drive
-, `32768` for the first sector, and `647167` for the last sector, then type `a`
+, `32768` for the first sector, and `647168` for the last sector, then type `a`
 , then type `n`, then `p` for primary, `2` for the second partition on the drive
-, `647168` for the first sector,and `28211199` for the last sector, then type `n`
-, then `p` for primary, `3` for the third partition on the drive, `28211200` for the first sector
-, and `30308351` for the last sector, then type `t` and `3` for the third partition and `82` for the Hex Code
+, `647169` for the first sector,and `28213246` for the last sector, then type `n`
+, then `p` for primary, `3` for the third partition on the drive, `28213247` for the first sector
+, and `30310399` for the last sector, then type `t` and `3` for the third partition and `82` for the Hex Code
 , then write the partition table and exit by typing `w`
 
 `cd /home/youruser/assets`
 
-`mkdir boot`			this is in your home directory ! → /home/youruser/assets/boot
+`mkdir boot`			this is in your home directory !   → /home/youruser/assets/boot
 
-`mkdir root`			this is in your home directory ! → /home/youruser/assets/root
+`mkdir root`			this is in your home directory !   → /home/youruser/assets/root
 
 	sudo mkfs.ext2 -m0 -L boot /dev/sdX1
 	sudo mount /dev/sdX1 /home/youruser/assets/boot
@@ -214,21 +213,18 @@ type `o` this will clear out any partitions on the drive
 
 `ip a`		check that network is working
 
-#### 11.)	Check the MAC address, may need spoofing if address is 7a:84:e4:9e:1e:c8 (1GB Board) or 36:59:33:ba:58:27 (4GB Board)
+#### 11.)	Check the MAC address, may need spoofing if address is 06:ca:fa:7c:8c:f8 (1GB Board) or 3e:6a:eb:10:6a:9b (4GB Board)
 
 `ip link show eth0`
 
-If you MAC address is `7a:84:e4:9e:1e:c8` or `36:59:33:ba:58:27` then do steps below, or the network
+If you MAC address is `06:ca:fa:7c:8c:f8` or `3e:6a:eb:10:6a:9b` then do steps below, or the network
 will not work ! (if you have multiple Rock64 SBC on the same network)
 
-`sudo nano /etc/systemd/network/00-default.link`
+`ip link set dev eth0 down`
 
-	[Match]
-	MACAddress= 7a:84:e4:9e:1e:c8
-	
-	[Link]
-	MACAddress=7a:84:e4:02:02:02
-	NamePolicy=kernel database onboard slot path
+`ip link set dev eth0 address 06:ca:fa:XX:XX:XX`
+
+`ip link set dev eth0 up`
 
 Change the last 3 bits of the linked MAC address to your liking,but DO NOT change the first 3 bits (reserved for Manufacturer).
 
@@ -246,6 +242,10 @@ perform system update
 #### 12.)	Remove unnecessary packages, which are no longer required
 
 	sudo apt purge qemu-guest-agent
+	sudo rm /root/etc/systemd/system/getty.target.wants/serial-getty@ttyAMA0.service
+	sudo rm -rf /boot/grub
+	sudo rm -rf /boot/efi
+
 
 #### 13.)	Add Firmware for Rockchip CDN DisplayPort Controller
 
@@ -265,6 +265,22 @@ perform system update
 `sudo apt update`	perform system update
 
 `sudo apt install firmware-misc-nonfree`	contains –> rockchip/dptx.bin
+
+
+#### 14.)	Hide kernel messages during boot
+
+`nano /etc/sysctl.conf`		amend as below
+
+	# Uncomment the following to stop low-level messages on console
+	kernel.printk = 3 4 1 3
+
+#### 15.)	Enable filesystem check at boot
+
+	sudo tune2fs -c 1 /dev/mmcblk1p1
+	sudo tune2fs -c 1 /dev/mmcblk1p2
+
+`sudo reboot`
+
 
 
 #### Done, enjoy your setup.
